@@ -9,6 +9,9 @@ services:
     container_name: nextcloud-proxy
     networks:
       - nextcloud_network
+    ports:
+      - 80:80
+      - 443:443
     volumes:
       - ./proxy/conf.d/my_custom_proxy_settings.conf:/etc/nginx/conf.d/my_custom_proxy_settings.conf
       - ./proxy/conf.d:/etc/nginx/conf.d:rw
@@ -42,8 +45,6 @@ services:
     volumes:
       - ./db-data:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 5432:5432
     environment:
       - POSTGRES_PASSWORD=MYPASSNEXTCLOUD
     restart: unless-stopped
