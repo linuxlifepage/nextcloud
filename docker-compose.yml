@@ -50,7 +50,7 @@ services:
     restart: unless-stopped
   
   app:
-    image: nextcloud:15.0.0
+    image: nextcloud:latest
     container_name: nextcloud-app
     networks:
       - nextcloud_network
@@ -70,5 +70,27 @@ services:
       - LETSENCRYPT_HOST=test.cakecloud.info
       - LETSENCRYPT_EMAIL=cakecloudinfo@gmail.com
     restart: unless-stopped  
+  onlyoffice:
+    container_name: onlyoffice-documentserver
+    networks:
+      - nextcloud_network
+    image: onlyoffice/documentserver:latest
+    depends_on:
+      - letsencrypt
+      - proxy
+      - db
+      - app
+    restart: always
+    volumes:
+      - ./DocumentServer/data:/var/www/onlyoffice/Data
+      - ./proxy/certs/dhparam.pem:/var/www/onlyoffice/Data/certs/dhparam.pem
+      - ./proxy/certs/test.cakecloud.info/key.pem:/var/www/onlyoffice/Data/certs/onlyoffice.key
+      - ./proxy/certs/test.cakecloud.info/cert.pem:/var/www/onlyoffice/Data/certs/onlyoffice.crt
+    environment:
+      - JWT_ENABLED=true
+      - JWT_SECRET=secret
+    ports:
+      - '8888:80'
+      - '4443:443'
 networks:
   nextcloud_network:
