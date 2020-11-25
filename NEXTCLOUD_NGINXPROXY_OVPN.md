@@ -53,6 +53,7 @@ _Давайте рассмотрим такую ситуацию, что у на
 ```curl http://10.8.0.4```
 
 Должна быть портянка:
+
 ```<!DOCTYPE html>
 <html class="ng-csp" data-placeholder-focus="false" lang="en" data-locale="en" >
 	<head
@@ -60,21 +61,25 @@ _Давайте рассмотрим такую ситуацию, что у на
 		<meta charset="utf-8">
 		<title>
 		Nextcloud		</title>
-    ...```
+```
     
 10) Открываем порт в Oracle:
 В нетворк - секьюрити лист открываем 8555
 
 Далее на сервере также открываем:
+
 ```sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 8555 -j ACCEPT```
 
 *ЕСЛИ У ВАС НЕТ ОРАКЛА, А ПРОСТОЙ VPS, то открываем порт через ufw:
+
 ```sudo ufw allow 8555/tcp```
 
 Отредактируем и добавим рядом с 22 наше правило:
+
 ```sudo vim /etc/iptables/rules.v4```
 
 добавить эту строку
+
 ```-A INPUT -p tcp -m state --state NEW -m tcp --dport 8555 -j ACCEPT```
 
 ***ЖЕЛАТЕЛЬНО ПЕРЕЗАГРУЗИТЬСЯ***
@@ -107,9 +112,11 @@ _Давайте рассмотрим такую ситуацию, что у на
         proxy_redirect http:// $scheme://;
     }
 
-}```
+}
+```
 
 Сохраняем, перезагружаем nginx: 
+
 ```sudo service nginx restart```
 
 И заходим в браузер:
@@ -124,20 +131,23 @@ _Давайте рассмотрим такую ситуацию, что у на
     0 => '192.168.1.9',
     1 => '10.8.0.3',
     2 => 'ncloud.linuxlife.website'  
-  ),```
+  ),
+  ```
 
 13) Если вы решили пересоздать в Докер-композ приложение (к примеру некстклауд), то
 	докер может ругаться, из-за того что openvpn мониторит сеть:
 
-```Creating network "nextcloud_test_nextcloud" with the default driver
-ERROR: could not find an available, non-overlapping IPv4 address pool among the defaults to assign to the network```
+```
+Creating network "nextcloud_test_nextcloud" with the default driver
+ERROR: could not find an available, non-overlapping IPv4 address pool among the defaults to assign to the network
+```
 
-	Решение простое:
-	```sudo service openvpn stop```
+Решение простое:
+```sudo service openvpn stop```
 
-	Дальше поднять свое приложение:
-	```sudo docker-compose up -d```
-	```sudo service openvpn start```
+Дальше поднять свое приложение:
+```sudo docker-compose up -d```
+```sudo service openvpn start```
 
 
 ***ИТОГ:***
