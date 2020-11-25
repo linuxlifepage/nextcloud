@@ -13,13 +13,16 @@ _Давайте рассмотрим такую ситуацию, что у на
 2) Запускаем наш скрипт openVPN из домашней директории
 
    ```sudo ./openvpn-install.sh ```   		#для Ubuntu 16 и старше
+   
    ```sudo ./openvpn-ubuntu-install.sh ```    #для Ubuntu 18 и младше
+   
    Выбираем первый пункт: Add a new user
    
 3) Копируем конфиг с сервера OVPN на сервер НК
    *сначала копируем на ПК, а потом на сервер
 
    ```scp ubuntu@158.101.111.111:/home/ubuntu/nextcloud.ovpn ./```
+   
    ```scp nextcloud.ovpn user@192.168.1.9:/home/user/```
 
 4) Ставим на сервер с НК OpenVPN
@@ -27,29 +30,39 @@ _Давайте рассмотрим такую ситуацию, что у на
 ```sudo apt update && sudo apt install openvpn -y```
 
 5) Скопируем наш конфиг в системную директорию
+
 ```sudo cp ~/nextcloud.ovpn /etc/openvpn/nextcloud.conf```
 
 6) Отредактируем опенвпн
+
 ```sudo vim /etc/default/openvpn```
 
 И добавим строку
+
 ```AUTOSTART="nextcloud"```
+
 *эта директива также автоматом рестартует подключение если связь была потеряна
 
 7) Узнаем наш внешний IP (так как мы за NAT, то выдаст IP провайдера)
+
 ```wget -O - -q icanhazip.com```
 
 8) Перезагружаемся ```sudo reboot``` и проверяем наш IP, если он совпадает с сервером ВПН, то радуемся:)
+
 ```ssh user@192.168.1.9```
+
 ```wget -O - -q icanhazip.com```
 
 Также узнаем наш IP интерфейса VPN:
+
 ```ip a | grep tun0 ```       # выдаст что-то типа того 10.8.0.4
 
 Также проверяем доступен ли наш nextcloud по внутреннему интерфейсу сети (НЕ ВПН):
+
 ```http:// 192.168.1.9```
 
 9) Проверяем доступность нашего некстклауда на сервере ВПН: 
+
 ```curl http://10.8.0.4```
 
 Должна быть портянка:
@@ -120,12 +133,15 @@ _Давайте рассмотрим такую ситуацию, что у на
 ```sudo service nginx restart```
 
 И заходим в браузер:
+
 ```https://ncloud.linuxlife.website:8555```
 
 12) Указываем в файле конфигурации config.php домашнего НК строку
+
 ```'overwritehost' => 'ncloud.linuxlife.website:8555',```
 
 Тутже добавим наш домен в одобренные:
+
 ```'trusted_domains' => 
   array (
     0 => '192.168.1.9',
@@ -143,9 +159,11 @@ ERROR: could not find an available, non-overlapping IPv4 address pool among the 
 ```
 
 Решение простое:
+
 ```sudo service openvpn stop```
 
 Дальше поднять свое приложение:
+
 ```sudo docker-compose up -d```
 ```sudo service openvpn start```
 
