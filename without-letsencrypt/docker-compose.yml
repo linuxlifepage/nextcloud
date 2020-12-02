@@ -1,0 +1,72 @@
+
+#
+#Не забудь заменить NEXTCLOUD_TRUSTED_DOMAINS на свое
+# А также ниже в конфиге эти данные:
+#      - NEXTCLOUD_ADMIN_USER
+#      - NEXTCLOUD_ADMIN_PASSWORD
+#      - NEXTCLOUD_TRUSTED_DOMAINS
+#      - MYSQL_HOST
+#      - MYSQL_USER
+#      - MYSQL_PASSWORD
+#      - MYSQL_DATABASE
+
+
+version: '3.8'
+
+services:
+  db:
+    image: mariadb
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: always
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=Llalalal
+      - MYSQL_PASSWORD=ASdmlkasdm
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+    networks: 
+      - nextcloud
+
+  app:
+    image: nextcloud:fpm
+    links:
+      - db
+    volumes:
+      - nextcloud:/var/www/html:z
+    depends_on:
+      - db
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - NEXTCLOUD_ADMIN_USER=User
+      - NEXTCLOUD_ADMIN_PASSWORD=passNEXTCLOUD
+      - NEXTCLOUD_TRUSTED_DOMAINS=10.20.0.27
+      - MYSQL_HOST=db
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=ASdmlkasdm
+      - MYSQL_DATABASE=nextcloud
+    restart: always
+    networks: 
+      - nextcloud
+  web:
+    image: nginx
+    ports:
+      - 80:80
+    links:
+      - app
+    volumes:
+      - nextcloud:/var/www/html:z
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app
+    restart: always
+    networks: 
+      - nextcloud 
+networks:
+  nextcloud:
+volumes:
+  nextcloud:
+  db:
+```
